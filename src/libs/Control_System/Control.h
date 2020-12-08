@@ -1,6 +1,7 @@
 #pragma once 
 #include <arduino.h>
-#include <math.h>
+
+
 
 
 class Controller
@@ -11,6 +12,13 @@ private:
     double velocity[3];
     double Acceleration[3];
     double g;
+    int kp;
+    int kv;
+    /*
+    double sin(double x);
+    double cos(double x);'
+    
+*/
 
     double Mass(double theta1, double ddtheta1, double theta2, double ddtheta2, double theta3,double ddtheta3, int joint);
     double G2(double theta2, double theta3);
@@ -37,6 +45,6 @@ double Controlsystem(double Atheta1,double dAtheta1,double ServoLaw1, double Ser
 double ServoLaw(double ddtheta, double pError, double vError);
 
 
-
+double Torque2Pwm(double torque, double velocity, int joint);
 };
 

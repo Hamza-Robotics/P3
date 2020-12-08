@@ -84,11 +84,30 @@ float Dynamixelclass::getPositionDegree(unsigned char MOTOR_ID){
   posd = (float)getPosition(MOTOR_ID)*0.088;
   return posd;
 }
+// MOTOR_ID -> specify the motor to communicate with, by inserting the ID number
+double Dynamixelclass::getPositionRadians(unsigned char MOTOR_ID){
+    double ticArr[3]={2047, 3073, 2047};
+    if(MOTOR_ID==0x01){
+        double pos=((double)getPosition(MOTOR_ID)-ticArr[0])*0.001534;
+    return pos;
+    }
+
+    if(MOTOR_ID==0x02){
+        double pos=((double)getPosition(MOTOR_ID)-ticArr[1])*0.001534;
+    return pos;
+    }
+
+    if(MOTOR_ID==0x03){
+        double pos=((double)getPosition(MOTOR_ID)-ticArr[2])*0.001534;
+    return pos;
+    }
+
+}
 
 // Function to get the velocity at a desired motor
 // -------------------------------------------------------
 // MOTOR_ID -> specify the motor to communicate with, by inserting the ID number
-int32_t Dynamixelclass::getVelocity(unsigned char MOTOR_ID){
+double Dynamixelclass::getVelocity(unsigned char MOTOR_ID){
     unsigned char Arr[14]={0xFF, 0xFF, 0xFD, 0x00, MOTOR_ID, 0x07, 0x00, 0x02, 0x80, 0x00, 0x02, 0x00, 0, 0};
     unsigned short len = sizeof(Arr)-2;
     unsigned short crc = update_crc(Arr, len); 
@@ -102,7 +121,8 @@ int32_t Dynamixelclass::getVelocity(unsigned char MOTOR_ID){
     rArr = sendNreadPacket(Arr, sizeof(Arr));  
     //Bitwize OR operation, bit shifting 8 bits, and then adding them together
 	int32_t result =(rArr[9] | rArr[10] << 8 ); 
-    return result; 
+    return result*0.229*0.104719755;
+; 
 }
 
 // Function to get the Pulse Width Modulation(PWM) for a desired motor

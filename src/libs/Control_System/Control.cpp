@@ -2,19 +2,22 @@
 #include <math.h>
 
 
-int kp;
-int kv;
 
-double th1_0;
-double th1_f;
-double th2_0;
-double th2_f;
-double th3_0;
-double th3_f;
-double t;
-double tf;
+int kp=16;
+int kv=8;
 
 double g=-9.80665; 
+/*
+double sin(double x){
+return 0;
+}
+
+double cos(double x){
+  return 0;
+}
+
+*/
+
 
 double Controller::Mass(double theta1, double ddtheta1, double theta2, double ddtheta2, double theta3,double ddtheta3, int joint){
 
@@ -73,21 +76,21 @@ double Controller::V1(double theta1, double dtheta1, double theta2, double dthet
   double s_V1_tmp;
 
   V1_tmp_tmp = 2.0 * theta2 - 0.069813170079773182 * theta1;
-  V1_tmp = std::sin(V1_tmp_tmp + 2.0 * theta3);
+  V1_tmp = sin(V1_tmp_tmp + 2.0 * theta3);
   b_V1_tmp_tmp = 0.069813170079773182 * theta1 + 2.0 * theta2;
-  b_V1_tmp = std::sin(b_V1_tmp_tmp + 2.0 * theta3);
-  c_V1_tmp = std::sin(0.069813170079773182 * theta1);
+  b_V1_tmp = sin(b_V1_tmp_tmp + 2.0 * theta3);
+  c_V1_tmp = sin(0.069813170079773182 * theta1);
   c_V1_tmp_tmp = theta2 + theta3;
-  d_V1_tmp = std::cos(c_V1_tmp_tmp);
-  e_V1_tmp = std::sin(c_V1_tmp_tmp);
+  d_V1_tmp = cos(c_V1_tmp_tmp);
+  e_V1_tmp = sin(c_V1_tmp_tmp);
   c_V1_tmp_tmp = 2.0 * theta2 + 2.0 * theta3;
-  f_V1_tmp = std::cos(c_V1_tmp_tmp);
-  g_V1_tmp = std::sin(c_V1_tmp_tmp);
-  h_V1_tmp = std::sin(2.0 * theta2 + theta3);
-  i_V1_tmp = std::sin(theta3 - 0.069813170079773182 * theta1);
-  j_V1_tmp = std::sin(0.069813170079773182 * theta1 + theta3);
-  k_V1_tmp = std::sin(V1_tmp_tmp + theta3);
-  l_V1_tmp = std::sin(b_V1_tmp_tmp + theta3);
+  f_V1_tmp = cos(c_V1_tmp_tmp);
+  g_V1_tmp = sin(c_V1_tmp_tmp);
+  h_V1_tmp = sin(2.0 * theta2 + theta3);
+  i_V1_tmp = sin(theta3 - 0.069813170079773182 * theta1);
+  j_V1_tmp = sin(0.069813170079773182 * theta1 + theta3);
+  k_V1_tmp = sin(V1_tmp_tmp + theta3);
+  l_V1_tmp = sin(b_V1_tmp_tmp + theta3);
   c_V1_tmp_tmp = dtheta2 * dtheta2;
   m_V1_tmp = 4.5525453907039893E-5 * c_V1_tmp_tmp;
   n_V1_tmp = 1.225666622146714E-5 * c_V1_tmp_tmp;
@@ -97,15 +100,15 @@ double Controller::V1(double theta1, double dtheta1, double theta2, double dthet
   q_V1_tmp = 2.4513332442934279E-5 * dtheta2 * dtheta3;
   r_V1_tmp = 0.0088297863675 * dtheta1 * dtheta3;
   s_V1_tmp = 3.8527211090146257E-5 * dtheta2 * dtheta3;
-  return (((((((((((((((((((((((((((((((((m_V1_tmp * std::sin(V1_tmp_tmp) -
-    m_V1_tmp * std::sin(b_V1_tmp_tmp)) + n_V1_tmp * V1_tmp) - n_V1_tmp *
+  return (((((((((((((((((((((((((((((((((m_V1_tmp * sin(V1_tmp_tmp) -
+    m_V1_tmp * sin(b_V1_tmp_tmp)) + n_V1_tmp * V1_tmp) - n_V1_tmp *
     b_V1_tmp) + o_V1_tmp * V1_tmp) - o_V1_tmp * b_V1_tmp) + p_V1_tmp * i_V1_tmp)
     - p_V1_tmp * j_V1_tmp) + p_V1_tmp * k_V1_tmp) - p_V1_tmp * l_V1_tmp) -
     0.00011556424025701407 * c_V1_tmp_tmp * c_V1_tmp) - 2.4513332442934279E-5 *
     d_V1_tmp_tmp * c_V1_tmp) - 3.266915E-5 * c_V1_tmp_tmp * d_V1_tmp) -
     3.266915E-5 * d_V1_tmp_tmp * d_V1_tmp) - 4.779E-8 * c_V1_tmp_tmp * e_V1_tmp)
     - 4.779E-8 * d_V1_tmp_tmp * e_V1_tmp) - 1.7807919999999997E-5 * c_V1_tmp_tmp
-    * std::cos(theta2)) - r_V1_tmp * std::sin(theta3)) + 1.4294E-7 * dtheta1 *
+    * cos(theta2)) - r_V1_tmp * sin(theta3)) + 1.4294E-7 * dtheta1 *
     dtheta2 * f_V1_tmp) + 1.4294E-7 * dtheta1 * dtheta3 * f_V1_tmp) -
                        0.00056423163687499935 * dtheta1 * dtheta2 * g_V1_tmp) -
                       0.00056423163687499935 * dtheta1 * dtheta3 * g_V1_tmp) +
@@ -113,8 +116,8 @@ double Controller::V1(double theta1, double dtheta1, double theta2, double dthet
                    dtheta1 * dtheta2 * h_V1_tmp) + r_V1_tmp * h_V1_tmp) +
                  s_V1_tmp * i_V1_tmp) - s_V1_tmp * j_V1_tmp) + s_V1_tmp *
                k_V1_tmp) - s_V1_tmp * l_V1_tmp) - 2.317644E-5 * dtheta1 *
-             dtheta2 * std::cos(2.0 * theta2)) + 0.013225203234326001 * dtheta1 *
-            dtheta2 * std::sin(2.0 * theta2)) - 4.9026664885868558E-5 * dtheta2 *
+             dtheta2 * cos(2.0 * theta2)) + 0.013225203234326001 * dtheta1 *
+            dtheta2 * sin(2.0 * theta2)) - 4.9026664885868558E-5 * dtheta2 *
            dtheta3 * c_V1_tmp) - 6.53383E-5 * dtheta2 * dtheta3 * d_V1_tmp) -
     9.558E-8 * dtheta2 * dtheta3 * e_V1_tmp;
 
@@ -153,21 +156,21 @@ double Controller::V23(double theta1, double dtheta1, double theta2, double dthe
   double x_V2_tmp;
 
   V2_tmp_tmp = 2.0 * theta2 + 2.0 * theta3;
-  V2_tmp = std::sin(V2_tmp_tmp);
+  V2_tmp = sin(V2_tmp_tmp);
   b_V2_tmp_tmp = 2.0 * theta2 - 0.069813170079773182 * theta1;
-  b_V2_tmp = std::sin(b_V2_tmp_tmp + 2.0 * theta3);
+  b_V2_tmp = sin(b_V2_tmp_tmp + 2.0 * theta3);
   c_V2_tmp_tmp = 0.069813170079773182 * theta1 + 2.0 * theta2;
-  c_V2_tmp = std::sin(c_V2_tmp_tmp + 2.0 * theta3);
-  d_V2_tmp = std::sin(2.0 * theta2 + theta3);
-  e_V2_tmp = std::sin(b_V2_tmp_tmp + theta3);
-  f_V2_tmp = std::sin(c_V2_tmp_tmp + theta3);
-  g_V2_tmp = std::sin(2.0 * theta2);
-  h_V2_tmp = std::sin(theta3);
-  i_V2_tmp = std::sin(0.069813170079773182 * theta1 - 2.0 * theta2);
-  b_V2_tmp_tmp = std::sin(c_V2_tmp_tmp);
-  c_V2_tmp_tmp = std::sin(0.069813170079773182 * theta1 + theta3);
-  j_V2_tmp = std::sin(0.069813170079773182 * theta1);
-  k_V2_tmp = std::sin(0.069813170079773182 * theta1 - theta3);
+  c_V2_tmp = sin(c_V2_tmp_tmp + 2.0 * theta3);
+  d_V2_tmp = sin(2.0 * theta2 + theta3);
+  e_V2_tmp = sin(b_V2_tmp_tmp + theta3);
+  f_V2_tmp = sin(c_V2_tmp_tmp + theta3);
+  g_V2_tmp = sin(2.0 * theta2);
+  h_V2_tmp = sin(theta3);
+  i_V2_tmp = sin(0.069813170079773182 * theta1 - 2.0 * theta2);
+  b_V2_tmp_tmp = sin(c_V2_tmp_tmp);
+  c_V2_tmp_tmp = sin(0.069813170079773182 * theta1 + theta3);
+  j_V2_tmp = sin(0.069813170079773182 * theta1);
+  k_V2_tmp = sin(0.069813170079773182 * theta1 - theta3);
   d = dtheta1 * dtheta1;
   d1 = dtheta3 * dtheta3;
   d2 = dtheta2 * dtheta2;
@@ -185,14 +188,14 @@ double Controller::V23(double theta1, double dtheta1, double theta2, double dthe
   w_V2_tmp = 3.8527211090146257E-5 * dtheta1 * dtheta3;
   x_V2_tmp = 0.0011037232959375 * dtheta2 * dtheta3;
   return ((((((((((((((((((((((((((((((((((((((((((((((0.00028211581843749968 *
-    d * V2_tmp - 7.147E-8 * d * std::cos(V2_tmp_tmp)) - 0.0011037232959375 * d1 *
+    d * V2_tmp - 7.147E-8 * d * cos(V2_tmp_tmp)) - 0.0011037232959375 * d1 *
     h_V2_tmp) - 0.000702255245390625 * d2 * V2_tmp) - 0.000702255245390625 * d1 *
     V2_tmp) - l_V2_tmp * i_V2_tmp) + l_V2_tmp * b_V2_tmp_tmp) + m_V2_tmp *
     b_V2_tmp) + m_V2_tmp * c_V2_tmp) + n_V2_tmp * b_V2_tmp) + n_V2_tmp *
     c_V2_tmp) - 0.0088297863675 * d * d_V2_tmp) - 0.002207446591875 * d2 *
     d_V2_tmp) - 0.0011037232959375 * (dtheta3 * dtheta3) * d_V2_tmp) + p_V2_tmp *
     c_V2_tmp_tmp) + o_V2_tmp * e_V2_tmp) + o_V2_tmp * f_V2_tmp) + p_V2_tmp *
-    e_V2_tmp) + p_V2_tmp * f_V2_tmp) + 1.158822E-5 * d * std::cos(2.0 * theta2))
+    e_V2_tmp) + p_V2_tmp * f_V2_tmp) + 1.158822E-5 * d * cos(2.0 * theta2))
     - 0.0066126016171630005 * d * g_V2_tmp) - 0.00260841636929075 * d2 *
     g_V2_tmp) - p_V2_tmp * k_V2_tmp) - u_V2_tmp * h_V2_tmp) -
     0.00140451049078125 * dtheta2 * dtheta3 * V2_tmp) + q_V2_tmp * i_V2_tmp) +
@@ -234,7 +237,7 @@ double Controller::AccTrac(double th0, double thf, double t, double tf){
   double a3=-((2/pow(tf,3))*(thf-th0)); 
   double Acc=2*a2+6*a3*t;
   while(t>tf){
-      return(2*a2+6*a3*tf);
+      return(0);
   }
 
   return Acc;  
@@ -271,10 +274,12 @@ return t;
 
     }
 
-double Controller::Torque2Pwm(double torque, double velocity, double joint){
+double Controller::Torque2Pwm(double torque, double velocity, int joint){
   double C1[3]={203.0974,146.2385,203.0974};
   double C2[3]={131.4431,160.1894,131.4431};
   double PWM=torque*C1[joint-1]+velocity*C2[joint-1];
+
+  return PWM;
 }
 
 /*

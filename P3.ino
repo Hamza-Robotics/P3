@@ -52,6 +52,19 @@ int sensorValue = 0; // accelerometer input
 int PointerY[5] = {35, 70, 105, 140, 170}; // array with y coordinates for pointer
 int gripperPos = 0; // 0=open, 1=closed
 
+double theta1_0=0;
+double theta1_f=0;
+double theta2_0=0;
+double theta2_f=0;
+double theta3_0=0;
+double theta3_f=0;
+
+double timef=10;
+
+
+
+
+
 
 void setup() {
   pinMode(10, INPUT);
@@ -67,9 +80,9 @@ void setup() {
   Dynamix.setStatusReturnLevel(GRIPPER_RIGHT, 01, WRITE);
 
 
-  Dynamix.setOperationMode(JOINT_1, 03, WRITE);
-  Dynamix.setOperationMode(JOINT_2, 03, WRITE);
-  Dynamix.setOperationMode(JOINT_3, 03, WRITE);
+  Dynamix.setOperationMode(JOINT_1, 16, WRITE);
+  Dynamix.setOperationMode(JOINT_2, 16, WRITE);
+  Dynamix.setOperationMode(JOINT_3, 16, WRITE);
   Dynamix.setOperationMode(GRIPPER_LEFT, 03, WRITE);
   Dynamix.setOperationMode(GRIPPER_RIGHT, 03, WRITE);
 
@@ -132,7 +145,7 @@ void setup() {
 
   Dynamix.setAccelerationProfile(GRIPPER_RIGHT, 20, WRITE);
   Dynamix.setVelocityProfile(GRIPPER_RIGHT, 100, WRITE);
-
+/*
   Dynamix.setPosition(JOINT_1, 2047, REQ_WRITE);
   delay(2);
   Dynamix.setPosition(JOINT_2, 3073, REQ_WRITE);
@@ -146,7 +159,10 @@ void setup() {
   delay(2);
   Dynamix.setAction(0xFE);
   delay(2000);
+  */
 }
+
+
 void startup() {
   for (int i = 0; i < 10; i++) {
     Dynamix.getPosition(JOINT_1);
@@ -265,14 +281,48 @@ void moving() {
   
 }
 void loop() {
+  delay(2999);
+    double time_start = millis()/1000;
   while (!Serial2) {}
   startup();
-  float hertz = 1000 / 1000;
+  float hertz = 1000;
   long old_time;
 
   while (true) {
-int t=millis()*1000;
-Serial.println(Crust.PosTrac(15,75, t, 3));
+ double time =millis();
+double t=((time/1000)-time_start);
+//Serial.println(t);
+
+
+double theta[3]={Crust.PosTrac(theta1_0, theta1_f,t,timef),Crust.PosTrac(theta2_0, theta2_f,t,timef),Crust.PosTrac(theta3_0, theta3_f,t,timef)};
+double dtheta[3]={Crust.VelTrac(theta1_0, theta1_f,t,timef),Crust.VelTrac(theta2_0, theta2_f,t,timef),Crust.VelTrac(theta3_0, theta3_f,t,timef)};
+double ddtheta[3]={Crust.AccTrac(theta1_0, theta1_f,t,timef),Crust.AccTrac(theta2_0, theta2_f,t,timef),Crust.AccTrac(theta3_0, theta3_f,t,timef)};
+
+double t1=Crust.ServoLaw(ddtheta[0],theta[0]-Dynamix.getPositionRadians(JOINT_1),dtheta[0]-Dynamix.getVelocity(JOINT_1));
+double t2=Crust.ServoLaw(ddtheta[1],theta[1]-Dynamix.getPositionRadians(JOINT_2),dtheta[1]-Dynamix.getVelocity(JOINT_2));
+double t3=Crust.ServoLaw(ddtheta[2],theta[2]-Dynamix.getPositionRadians(JOINT_3),dtheta[2]-Dynamix.getVelocity(JOINT_3));
+
+delay(1);
+ double control1=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),1);
+ delay(1);
+ double control2=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),2);
+ delay(1);
+ //(double Atheta1,double dAtheta1,double ServoLaw1, double ServoLaw2,double dAtheta2,double Atheta2,double ServoLaw3,double dAtheta3,double Atheta3, int joint)
+ double control3=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),3);
+
+double Pwm1=Crust.Torque2Pwm(control1, dtheta[0], 1);
+double Pwm2=Crust.Torque2Pwm(control2, dtheta[1], 2);
+double Pwm3=Crust.Torque2Pwm(control3, dtheta[2], 3);
+
+Dynamix.setPWM(JOINT_1,(unsigned short)Pwm1,04);
+Dynamix.setPWM(JOINT_2,(unsigned short)Pwm2,04);
+Dynamix.setPWM(JOINT_3,(unsigned short)Pwm3,04);
+Dynamix.setAction(0xfe);
+delay(1);
+Serial.println(Dynamix.getPositionRadians(JOINT_2)*(180/3.141592));
+
+
+
     old_time = millis();
 
     //xbee.updateData();
@@ -294,8 +344,7 @@ Serial.println(Crust.PosTrac(15,75, t, 3));
 
 //Serial.println(XbeeMeter(xbee.getAccY()));
 
-    while (millis() - old_time < hertz){
+  //  while (millis() - old_time < hertz){
 
-    }
-  
+      
 }

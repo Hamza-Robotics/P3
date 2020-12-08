@@ -32,7 +32,8 @@ public:
 
     int32_t getPosition(unsigned char MOTOR_ID);
     float getPositionDegree(unsigned char MOTOR_ID);
-    int32_t getVelocity(unsigned char MOTOR_ID);
+    double getPositionRadians(unsigned char MOTOR_ID);
+    double getVelocity(unsigned char MOTOR_ID);
     int32_t getPWM(unsigned char MOTOR_ID);
     int32_t getGain(unsigned char MOTOR_ID, char setControllerGain);
     int32_t getMovingstatus(unsigned char MOTOR_ID);
