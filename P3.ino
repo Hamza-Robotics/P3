@@ -2,21 +2,6 @@
 #include "src/libs/Dynamixel_Lib/Dynamixel.h"
 #include "src/libs/Control_System/Control.h"
 
-#define LCD_CS A3
-#define LCD_CD A2
-#define LCD_WR A1
-#define LCD_RD A0
-#define LCD_RESET A4
-//Det er fordi jeg elskser alle farver...
-#define BLACK   0x0000
-#define BLUE    0x001F
-#define RED     0xF800
-#define GREEN   0x07E0
-#define CYAN    0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW  0xFFE0
-#define WHITE   0xFFFF
-
 #define JOINT_1 0x01
 #define JOINT_2 0x02
 #define JOINT_3 0x03
@@ -33,24 +18,6 @@
 Dynamixelclass Dynamix;
 
 Controller Crust;
-
-// controlling buttons
-int upButton = 52;
-int downButton = 53;
-int selectButton = 51;
-int menu = 0; //menu value for switch
-int y = 0;    // variable y koordinate for pointer (arrow)
-bool MainMenu = true; // to check which menu the user is in
-// Point states which are used to tell whether or not the custom points store coordinates in them (green or red)
-bool Point1State = false;
-bool Point2State = false;
-bool Point3State = false;
-bool Point4State = false;
-int sensorMin = 1023; // almost random number for calibration
-int sensorMax = 0; // same as above
-int sensorValue = 0; // accelerometer input
-int PointerY[5] = {35, 70, 105, 140, 170}; // array with y coordinates for pointer
-int gripperPos = 0; // 0=open, 1=closed
 
 double theta1_0=0;
 double theta1_f=0;
@@ -156,7 +123,8 @@ void setup() {
   delay(2000);
 }
 
-void startup() {
+void startup()
+ {
   for (int i = 0; i < 10; i++) {
     Dynamix.getPosition(JOINT_1);
     delay(6);
@@ -171,6 +139,8 @@ void startup() {
   }
 
 }
+
+
 void PrimeMover(int a){
   const char Limb[]={JOINT_1,JOINT_2, JOINT_3};
   int32_t joint = Dynamix.getPosition(Limb[a]);
@@ -195,85 +165,7 @@ void PrimeMover(int a){
        }
 
 }
-void moving() {
-  if (menu == 0)
-  {
-    int32_t joint1 = Dynamix.getPosition(JOINT_1);
-    int32_t sendjointN1 = joint1 - 40;
-    int32_t sendjointP1 = joint1 + 40;
-    delay(6);
-    if (digitalRead(10)) {
-      Dynamix.setPosition(JOINT_1, sendjointN1, WRITE);
-    while((sendjointN1-10)>Dynamix.getPosition(JOINT_1)){
-        delay(6);
-        }    
-    }
-    else if (digitalRead(11)) {
-      Dynamix.setPosition(JOINT_1, sendjointP1, WRITE);
-    while((sendjointP1+10)<Dynamix.getPosition(JOINT_1)){
-             delay(6);
-        }
-    }
-    else{
-      Dynamix.clearSerialBuffer(); 
-       }
-   
-
-   
-
-
-    
-  }
-  else if (menu == 1)
-  {
-    int32_t joint2 = Dynamix.getPosition(JOINT_2);
-    int32_t sendjointN2 = joint2 - 40;
-    int32_t sendjointP2 = joint2 + 40;
-    delay(6);
-    if (digitalRead(10)) {
-      Dynamix.setPosition(JOINT_2, sendjointN2, WRITE);
-      delay(90);
-    }
-    else if (digitalRead(11)) {
-      Dynamix.setPosition(JOINT_2, sendjointP2, WRITE);
-      delay(90);
-    }
-  }
-  else if (menu == 2)
-  {
-    int32_t joint3 = Dynamix.getPosition(JOINT_3);
-    int32_t sendjointN3 = joint3 - 40;
-    int32_t sendjointP3 = joint3 + 40;
-    delay(6);
-    if (digitalRead(10)) {
-      Dynamix.setPosition(JOINT_3, sendjointN3, WRITE);
-      delay(90);
-    }
-    else if (digitalRead(11)) {
-      Dynamix.setPosition(JOINT_3, sendjointP3, WRITE);
-      delay(90);
-    }
-  }
-  else if (menu == 3)
-  {
-    int32_t gripper = Dynamix.getPosition(GRIPPER_LEFT);
-    int32_t gripperN = gripper - 30;
-    int32_t gripperP = gripper + 30;
-    delay(6);
-    if (digitalRead(10)) {
-      Dynamix.setPosition(GRIPPER_BOTH, gripperP, WRITE); // gripper opens
-      delay(6);
-      Serial.println(gripper);
-    }
-    else if (digitalRead(11)) {
-      Dynamix.setPosition(GRIPPER_BOTH, gripperN, WRITE); // gripper closes
-      delay(6);
-    }
-    
-  }
-  
-}
-void loop() {
+ void loop() {
     double time_start = millis()/1000;
   while (!Serial2) {}
   startup();
@@ -284,7 +176,7 @@ void loop() {
  double time =millis();
 double t=((time/1000)-time_start);
 //Serial.println(t);
-/*
+
 
 double theta[3]={Crust.PosTrac(theta1_0, theta1_f,t,timef),Crust.PosTrac(theta2_0, theta2_f,t,timef),Crust.PosTrac(theta3_0, theta3_f,t,timef)};
 double dtheta[3]={Crust.VelTrac(theta1_0, theta1_f,t,timef),Crust.VelTrac(theta2_0, theta2_f,t,timef),Crust.VelTrac(theta3_0, theta3_f,t,timef)};
@@ -310,7 +202,6 @@ delay(1);
  delay(1);
  double control2=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),2);
  delay(1);
- //(double Atheta1,double dAtheta1,double ServoLaw1, double ServoLaw2,double dAtheta2,double Atheta2,double ServoLaw3,double dAtheta3,double Atheta3, int joint)
  double control3=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),3);
 
 double Pwm1=Crust.Torque2Pwm(control1, dtheta[0], 1);
@@ -318,11 +209,11 @@ double Pwm2=Crust.Torque2Pwm(control2, dtheta[1], 2);
 double Pwm3=Crust.Torque2Pwm(control3, dtheta[2], 3);
 
 //Serial.println(Pwm2);
-*/
 
-Dynamix.setPWM(JOINT_1,0,0x04);
-Dynamix.setPWM(JOINT_2,-154,0x04);
-Dynamix.setPWM(JOINT_3,-70,0x04);
+
+Dynamix.setPWM(JOINT_1,Pwm1,0x04);
+Dynamix.setPWM(JOINT_2,Pwm2,0x04);
+Dynamix.setPWM(JOINT_3,Pwm3,0x04);
 Dynamix.setAction(0xfe);
 delay(1);
 //Serial.println(control2);
@@ -351,7 +242,8 @@ delay(1);
 
 //Serial.println(XbeeMeter(xbee.getAccY()));
 
-  //  while (millis() - old_time < hertz){
+   while (millis() - old_time < hertz){
 
       
 }
+ }

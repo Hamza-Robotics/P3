@@ -111,8 +111,8 @@ return t;
     }
 
 double Controller::Torque2Pwm(double torque, double velocity, int joint){
-  double C1[3]={0,115,203.0974};
-  double C2[3]={131.4431,18.57,131.4431};
+  double C1[3]={203.0874,115,203.0974};
+  double C2[3]={12.142,18.57,12.142};
   double PWM=torque*C1[joint-1]+velocity*C2[joint-1];
 
   return PWM;
