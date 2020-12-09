@@ -11,7 +11,6 @@ private:
     double position[3];
     double velocity[3];
     double Acceleration[3];
-    double g;
     int kp;
     int kv;
     /*

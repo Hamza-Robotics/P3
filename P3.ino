@@ -298,9 +298,19 @@ double theta[3]={Crust.PosTrac(theta1_0, theta1_f,t,timef),Crust.PosTrac(theta2_
 double dtheta[3]={Crust.VelTrac(theta1_0, theta1_f,t,timef),Crust.VelTrac(theta2_0, theta2_f,t,timef),Crust.VelTrac(theta3_0, theta3_f,t,timef)};
 double ddtheta[3]={Crust.AccTrac(theta1_0, theta1_f,t,timef),Crust.AccTrac(theta2_0, theta2_f,t,timef),Crust.AccTrac(theta3_0, theta3_f,t,timef)};
 
-double t1=Crust.ServoLaw(ddtheta[0],theta[0]-Dynamix.getPositionRadians(JOINT_1),dtheta[0]-Dynamix.getVelocity(JOINT_1));
-double t2=Crust.ServoLaw(ddtheta[1],theta[1]-Dynamix.getPositionRadians(JOINT_2),dtheta[1]-Dynamix.getVelocity(JOINT_2));
-double t3=Crust.ServoLaw(ddtheta[2],theta[2]-Dynamix.getPositionRadians(JOINT_3),dtheta[2]-Dynamix.getVelocity(JOINT_3));
+double Perror1=theta[0]-Dynamix.getPositionRadians(JOINT_1);
+double Perror2=theta[1]-Dynamix.getPositionRadians(JOINT_2);
+double Perror3=theta[2]-Dynamix.getPositionRadians(JOINT_3);
+
+double Verror1=dtheta[0]-Dynamix.getVelocity(JOINT_1);
+double Verror2=dtheta[1]-Dynamix.getVelocity(JOINT_2);
+double Verror3=dtheta[2]-Dynamix.getVelocity(JOINT_3);
+
+
+
+double t1=Crust.ServoLaw(ddtheta[0],Perror1,Verror1);
+double t2=Crust.ServoLaw(ddtheta[1],Perror2,Verror2);
+double t3=Crust.ServoLaw(ddtheta[2],Perror3,Verror3);
 
 delay(1);
  double control1=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),1);
@@ -319,7 +329,7 @@ Dynamix.setPWM(JOINT_2,(unsigned short)Pwm2,04);
 Dynamix.setPWM(JOINT_3,(unsigned short)Pwm3,04);
 Dynamix.setAction(0xfe);
 delay(1);
-Serial.println(Dynamix.getPositionRadians(JOINT_2)*(180/3.141592));
+Serial.println();
 
 
 
