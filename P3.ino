@@ -64,8 +64,6 @@ double timef=10;
 
 
 
-
-
 void setup() {
   pinMode(10, INPUT);
   pinMode(11, INPUT);
@@ -83,8 +81,8 @@ void setup() {
   Dynamix.setOperationMode(JOINT_1, 16, WRITE);
   Dynamix.setOperationMode(JOINT_2, 16, WRITE);
   Dynamix.setOperationMode(JOINT_3, 16, WRITE);
-  Dynamix.setOperationMode(GRIPPER_LEFT, 03, WRITE);
-  Dynamix.setOperationMode(GRIPPER_RIGHT, 03, WRITE);
+  Dynamix.setOperationMode(GRIPPER_LEFT, 16, WRITE);
+  Dynamix.setOperationMode(GRIPPER_RIGHT, 16, WRITE);
 
 
   Dynamix.setMaxPosition(JOINT_1, 4095, WRITE);
@@ -145,23 +143,18 @@ void setup() {
 
   Dynamix.setAccelerationProfile(GRIPPER_RIGHT, 20, WRITE);
   Dynamix.setVelocityProfile(GRIPPER_RIGHT, 100, WRITE);
-/*
-  Dynamix.setPosition(JOINT_1, 2047, REQ_WRITE);
+
+  Dynamix.setPWM(JOINT_1, 0, REQ_WRITE);
   delay(2);
-  Dynamix.setPosition(JOINT_2, 3073, REQ_WRITE);
+  Dynamix.setPWM(JOINT_2, -150, REQ_WRITE);
   delay(2);
-  Dynamix.setPosition(JOINT_3, 2047, REQ_WRITE);
+  Dynamix.setPWM(JOINT_3, -100, REQ_WRITE);
   delay(2);
-  Dynamix.setPosition(GRIPPER_BOTH, 2047, REQ_WRITE);
-  delay(2);
-  gripperPos = 1;
-  // Dynamix.setPosition(05, 2047, 04);
+
   delay(2);
   Dynamix.setAction(0xFE);
   delay(2000);
-  */
 }
-
 
 void startup() {
   for (int i = 0; i < 10; i++) {
@@ -281,7 +274,6 @@ void moving() {
   
 }
 void loop() {
-  delay(2999);
     double time_start = millis()/1000;
   while (!Serial2) {}
   startup();
@@ -292,7 +284,7 @@ void loop() {
  double time =millis();
 double t=((time/1000)-time_start);
 //Serial.println(t);
-
+/*
 
 double theta[3]={Crust.PosTrac(theta1_0, theta1_f,t,timef),Crust.PosTrac(theta2_0, theta2_f,t,timef),Crust.PosTrac(theta3_0, theta3_f,t,timef)};
 double dtheta[3]={Crust.VelTrac(theta1_0, theta1_f,t,timef),Crust.VelTrac(theta2_0, theta2_f,t,timef),Crust.VelTrac(theta3_0, theta3_f,t,timef)};
@@ -312,6 +304,7 @@ double t1=Crust.ServoLaw(ddtheta[0],Perror1,Verror1);
 double t2=Crust.ServoLaw(ddtheta[1],Perror2,Verror2);
 double t3=Crust.ServoLaw(ddtheta[2],Perror3,Verror3);
 
+
 delay(1);
  double control1=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),1);
  delay(1);
@@ -324,12 +317,16 @@ double Pwm1=Crust.Torque2Pwm(control1, dtheta[0], 1);
 double Pwm2=Crust.Torque2Pwm(control2, dtheta[1], 2);
 double Pwm3=Crust.Torque2Pwm(control3, dtheta[2], 3);
 
-Dynamix.setPWM(JOINT_1,(unsigned short)Pwm1,04);
-Dynamix.setPWM(JOINT_2,(unsigned short)Pwm2,04);
-Dynamix.setPWM(JOINT_3,(unsigned short)Pwm3,04);
+//Serial.println(Pwm2);
+*/
+
+Dynamix.setPWM(JOINT_1,0,0x04);
+Dynamix.setPWM(JOINT_2,-154,0x04);
+Dynamix.setPWM(JOINT_3,-70,0x04);
 Dynamix.setAction(0xfe);
 delay(1);
-Serial.println();
+//Serial.println(control2);
+//Serial.println(Dynamix.getPWM(JOINT_2));
 
 
 

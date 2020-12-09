@@ -310,22 +310,26 @@ void Dynamixelclass::setPositionDegree(unsigned char MOTOR_ID, float setVal, uns
 // MOTOR_ID -> specify the motor to communicate with, by inserting the ID number
 // setVal -> input the PWM value the motor shall have
 // setIntruction -> set the instruction to send - 0x03(WRITE) or 0x04(REQ_WRITE) 
-void Dynamixelclass::setPWM(unsigned char MOTOR_ID, unsigned short setVal, unsigned char setIntruction){
-    unsigned short val = setVal;
-    unsigned char val_H = (val & 0x00FF);
-    unsigned char val_L = (val>>8) & 0x00FF;
 
-    unsigned char Arr[14]={0xFF, 0xFF, 0xFD, 0x00, MOTOR_ID, 0x07, 0x00, setIntruction, 0x64, 0x00, val_L, val_H, 0, 0};
+void Dynamixelclass::setPWM(unsigned char MOTOR_ID, unsigned short setVal, unsigned char setIntruction){
+    signed short val = setVal;
+ 
+    unsigned char val_LL = (val & 0xFF);
+    unsigned char val_L =  (val & 0xFF00) >> 8;
+    unsigned char val_H =  (val & 0xFF0000) >> 16;
+    unsigned char val_HH =  (val & 0xFF000000) >> 24;
+
+    unsigned char Arr[16]={0xFF, 0xFF, 0xFD, 0x00, MOTOR_ID, 0x09, 0x00, setIntruction, 0x64, 0x00, val_LL, val_L, val_H, val_HH, 0, 0};
     unsigned short len = sizeof(Arr)-2;
     unsigned short crc = update_crc(Arr, len);
     unsigned char CRC_L = (crc & 0x00FF);
     unsigned char CRC_H = (crc>>8) & 0x00FF;
 
-    Arr[12]=CRC_L;
-    Arr[13]=CRC_H;
+    Arr[14]=CRC_L;
+    Arr[15]=CRC_H;
 
     // clears the serial buffer before sending information to Dynamixel
-    clearSerialBuffer();
+    //clearSerialBuffer();
     sendPacket(Arr, sizeof(Arr));
 }
 
