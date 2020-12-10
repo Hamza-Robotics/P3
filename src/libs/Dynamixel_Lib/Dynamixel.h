@@ -38,6 +38,7 @@ public:
     int32_t getGain(unsigned char MOTOR_ID, char setControllerGain);
     int32_t getMovingstatus(unsigned char MOTOR_ID);
     bool getMoving(unsigned char MOTOR_ID);
+    double Dynamixelclass::getVelocityRadians(unsigned char MOTOR_ID);
 
     void setGain(unsigned char MOTOR_ID, unsigned short setVal, unsigned char setIntruction, char setControllerGain);
     void setPosition(unsigned char MOTOR_ID, signed short setVal, unsigned char setIntruction);

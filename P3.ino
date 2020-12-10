@@ -113,7 +113,7 @@ void setup() {
 
   Dynamix.setPWM(JOINT_1, 0, REQ_WRITE);
   delay(2);
-  Dynamix.setPWM(JOINT_2, -150, REQ_WRITE);
+  Dynamix.setPWM(JOINT_2, -180, REQ_WRITE);
   delay(2);
   Dynamix.setPWM(JOINT_3, -100, REQ_WRITE);
   delay(2);
@@ -167,17 +167,19 @@ void PrimeMover(int a){
 }
  void loop() {
     double time_start = millis()/1000;
+
   while (!Serial2) {}
   startup();
   float hertz = 1000;
   long old_time;
 
   while (true) {
+    old_time = millis();
  double time =millis();
 double t=((time/1000)-time_start);
 //Serial.println(t);
 
-
+    int32_t starttid = millis();
 double theta[3]={Crust.PosTrac(theta1_0, theta1_f,t,timef),Crust.PosTrac(theta2_0, theta2_f,t,timef),Crust.PosTrac(theta3_0, theta3_f,t,timef)};
 double dtheta[3]={Crust.VelTrac(theta1_0, theta1_f,t,timef),Crust.VelTrac(theta2_0, theta2_f,t,timef),Crust.VelTrac(theta3_0, theta3_f,t,timef)};
 double ddtheta[3]={Crust.AccTrac(theta1_0, theta1_f,t,timef),Crust.AccTrac(theta2_0, theta2_f,t,timef),Crust.AccTrac(theta3_0, theta3_f,t,timef)};
@@ -186,9 +188,9 @@ double Perror1=theta[0]-Dynamix.getPositionRadians(JOINT_1);
 double Perror2=theta[1]-Dynamix.getPositionRadians(JOINT_2);
 double Perror3=theta[2]-Dynamix.getPositionRadians(JOINT_3);
 
-double Verror1=dtheta[0]-Dynamix.getVelocity(JOINT_1);
-double Verror2=dtheta[1]-Dynamix.getVelocity(JOINT_2);
-double Verror3=dtheta[2]-Dynamix.getVelocity(JOINT_3);
+double Verror1=dtheta[0]-Dynamix.getVelocityRadians(JOINT_1);
+double Verror2=dtheta[1]-Dynamix.getVelocityRadians(JOINT_2);
+double Verror3=dtheta[2]-Dynamix.getVelocityRadians(JOINT_3);
 
 
 
@@ -198,11 +200,11 @@ double t3=Crust.ServoLaw(ddtheta[2],Perror3,Verror3);
 
 
 delay(1);
- double control1=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),1);
+ double control1=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocityRadians(JOINT_1),t1,t2,Dynamix.getVelocityRadians(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocityRadians(JOINT_3),Dynamix.getPositionRadians(JOINT_2),1);
  delay(1);
- double control2=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),2);
+ double control2=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocityRadians(JOINT_1),t1,t2,Dynamix.getVelocityRadians(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocityRadians(JOINT_3),Dynamix.getPositionRadians(JOINT_2),2);
  delay(1);
- double control3=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocity(JOINT_1),t1,t2,Dynamix.getVelocity(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocity(JOINT_3),Dynamix.getPositionRadians(JOINT_2),3);
+ double control3=Crust.Controlsystem(Dynamix.getPositionRadians(JOINT_1),Dynamix.getVelocityRadians(JOINT_1),t1,t2,Dynamix.getVelocityRadians(JOINT_2),Dynamix.getPositionRadians(JOINT_2),t3,Dynamix.getVelocityRadians(JOINT_3),Dynamix.getPositionRadians(JOINT_2),3);
 
 double Pwm1=Crust.Torque2Pwm(control1, dtheta[0], 1);
 double Pwm2=Crust.Torque2Pwm(control2, dtheta[1], 2);
@@ -210,22 +212,29 @@ double Pwm3=Crust.Torque2Pwm(control3, dtheta[2], 3);
 
 //Serial.println(Pwm2);
 
+//Serial.println(t1);
 
 Dynamix.setPWM(JOINT_1,Pwm1,0x04);
 Dynamix.setPWM(JOINT_2,Pwm2,0x04);
 Dynamix.setPWM(JOINT_3,Pwm3,0x04);
 Dynamix.setAction(0xfe);
 delay(1);
+
+
 //Serial.println(control2);
 //Serial.println(Dynamix.getPWM(JOINT_2));
 
 
-
-    old_time = millis();
+//Serial.println(Dynamix.getVelocityRadians(JOINT_2));
+//Serial.println(Dynamix.getPositionRadians(JOINT_2));
+    
 
     //xbee.updateData();
 
-  
+   int32_t sluttid=millis();
+  int32_t tid;
+  tid=sluttid-starttid;
+  Serial.println(tid);
     }
     
       
@@ -242,8 +251,8 @@ delay(1);
 
 //Serial.println(XbeeMeter(xbee.getAccY()));
 
-   while (millis() - old_time < hertz){
+   while (millis() - old_time < 200){}
 
-      
-}
+ 
+
  }
